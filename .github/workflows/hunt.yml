@@ -20,6 +20,12 @@ jobs:
         run: cd functions && npm install
       - name: Install Playwright
         run: cd functions && npx playwright install chromium --with-deps
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install SeleniumBase
+        run: pip install seleniumbase
       - name: Write Facebook Auth Secret
         run: echo '${{ secrets.FACEBOOK_AUTH }}' > functions/facebook-auth.json
       - name: Run Scraper and Generate HTML
