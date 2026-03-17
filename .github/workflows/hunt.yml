@@ -27,7 +27,9 @@ jobs:
       - name: Install SeleniumBase
         run: pip install seleniumbase
       - name: Write Facebook Auth Secret
-        run: echo '${{ secrets.FACEBOOK_AUTH }}' > functions/facebook-auth.json
+        run: |
+          mkdir -p functions
+          printf '%s' '${{ secrets.FACEBOOK_AUTH }}' > functions/facebook-auth.json
       - name: Run Scraper and Generate HTML
         run: node functions/runner.js
       - name: Deploy to GitHub Pages
