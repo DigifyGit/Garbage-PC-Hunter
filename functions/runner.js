@@ -36,13 +36,20 @@ async function run() {
 
   try {
     const authPath = './functions/facebook-auth.json';
-    if (existsSync(authPath)) {
-      const parsedCookies = JSON.parse(readFileSync(authPath, 'utf8'));
-      if (Array.isArray(parsedCookies) && parsedCookies.length > 0) {
-        await context.addCookies(parsedCookies);
-      }
+    let parsedCookies = [];
+
+    if (process.env.FACEBOOK_AUTH) {
+      const parsedSecret = JSON.parse(process.env.FACEBOOK_AUTH);
+      parsedCookies = Array.isArray(parsedSecret) ? parsedSecret : parsedSecret.cookies || [];
+    } else if (existsSync(authPath)) {
+      const parsedFile = JSON.parse(readFileSync(authPath, 'utf8'));
+      parsedCookies = Array.isArray(parsedFile) ? parsedFile : parsedFile.cookies || [];
     } else {
-      runErrors.push('FACEBOOK NO_AUTH: functions/facebook-auth.json missing.');
+      runErrors.push('FACEBOOK NO_AUTH: FACEBOOK_AUTH secret and functions/facebook-auth.json missing.');
+    }
+
+    if (Array.isArray(parsedCookies) && parsedCookies.length > 0) {
+      await context.addCookies(parsedCookies);
     }
   } catch (error) {
     runErrors.push(formatRunError('FACEBOOK_AUTH', error));
