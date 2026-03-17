@@ -9,7 +9,7 @@ import { runFacebook } from './hunters/facebook.js';
 import { scoreListings } from './scorer.js';
 import { sendTelegramReport } from './reporter.js';
 
-initializeApp();
+initializeApp({ projectId: 'garbage-pc-hunter' });
 const db = getFirestore();
 
 // Install Chromium on cold start
