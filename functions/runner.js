@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { runOLX } from './hunters/olx.js';
@@ -35,12 +36,13 @@ async function run() {
   let facebookResults = [];
 
   try {
-    const cookieData = fs.readFileSync('functions/facebook-auth.json', 'utf8');
+    const facebookAuthPath = path.resolve(process.cwd(), 'functions', 'facebook-auth.json');
+    const cookieData = fs.readFileSync(facebookAuthPath, 'utf8');
     const cookies = JSON.parse(cookieData);
     await context.addCookies(cookies);
-    console.log('STATUS: Cookies injected successfully from disk.');
+    console.log(`STATUS: Cookies injected successfully from ${facebookAuthPath}.`);
   } catch (e) {
-    console.error('CRITICAL ERROR: Could not read or parse facebook-auth.json:', e.message);
+    console.error('CRITICAL ERROR: Could not read or parse functions/facebook-auth.json:', e.message);
     throw new Error('NO_AUTH_FILE');
   }
 
