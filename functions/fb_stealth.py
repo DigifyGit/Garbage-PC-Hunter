@@ -8,7 +8,7 @@ def scrape_fb():
     # uc=True activates Undetected ChromeDriver to bypass WAFs
     with SB(uc=True, headless=True) as sb:
         try:
-            sb.open("https://www.facebook.com/marketplace/lisbon/search/?query=i7%2016gb&maxPrice=500")
+            sb.open("https://www.facebook.com/marketplace/lisbon/search/?query=port%C3%A1til&maxPrice=500")
             sb.sleep(4)
             # Dismiss the unauthenticated login wall modal
             sb.press_keys("body", "\x1b")
@@ -27,6 +27,9 @@ def scrape_fb():
                             "url": "https://facebook.com/marketplace",
                         }
                     )
+
+            if not results:
+                sb.save_screenshot("public/fb_debug.png")
         except Exception as e:
             print(f"FB_ERROR: {str(e)}")
             sys.exit(1)

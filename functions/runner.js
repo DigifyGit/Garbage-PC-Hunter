@@ -8,6 +8,8 @@ import { writeDashboard } from './dashboard.js';
 
 chromium.use(StealthPlugin());
 
+const BROAD_OLX_KEYWORDS = ['portátil', 'portatil', 'laptop', 'laptops'];
+
 function formatRunError(platform, error) {
   if (!error) return `${platform}: unknown error`;
   if (typeof error === 'string') return `${platform}: ${error}`;
@@ -49,7 +51,7 @@ async function run() {
 
   try {
     try {
-      olxResults = await runOLX(browser);
+      olxResults = await runOLX(browser, BROAD_OLX_KEYWORDS);
       runErrors.push(...collectPlatformStatuses(olxResults));
     } catch (error) {
       runErrors.push(formatRunError('OLX', error));

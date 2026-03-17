@@ -37,7 +37,12 @@ export function buildDashboardHtml(listings = [], runErrors = []) {
 
   const listingsContent = listings.length
     ? `<section class="grid">${cards}</section>`
-    : '<p class="empty-listings"><strong>0 listings found. The scraper may have been blocked by the platforms.</strong></p>';
+    : `
+      <div class="empty-listings">
+        <p><strong>0 listings found. The scraper may have been blocked by the platforms.</strong></p>
+        <p><a href="/fb_debug.png" target="_blank" rel="noopener noreferrer">View Facebook debug screenshot</a></p>
+      </div>
+    `;
 
   return `<!doctype html>
 <html lang="en">

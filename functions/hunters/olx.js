@@ -1,9 +1,9 @@
 import { KEYWORDS_PT_EN, BUDGET } from '../keywords.js';
 
-export async function runOLX(browser) {
+export async function runOLX(browser, keywords = KEYWORDS_PT_EN) {
   const results = [];
 
-  for (const keyword of KEYWORDS_PT_EN) {
+  for (const keyword of keywords) {
     let page;
     try {
       page = await browser.newPage();
