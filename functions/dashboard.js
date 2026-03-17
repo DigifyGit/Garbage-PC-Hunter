@@ -1,18 +1,22 @@
-'use strict';
+// Improved error handling and proper path resolution for the public directory output
 
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
 
-const publicDir = path.resolve(__dirname, 'public');
+function outputToPublicDirectory(data) {
+    const publicDir = path.resolve(__dirname, 'public');
+    const filePath = path.join(publicDir, 'output.json');
 
-try {
-    // Attempt to create the public directory if it doesn't already exist
+    // Ensure public directory exists
     if (!fs.existsSync(publicDir)) {
-        fs.mkdirSync(publicDir);
-        console.log('Public directory created at:', publicDir);
-    } else {
-        console.log('Public directory already exists at:', publicDir);
+        fs.mkdirSync(publicDir, { recursive: true });
     }
-} catch (error) {
-    console.error('Error creating public directory:', error);
+
+    fs.writeFile(filePath, JSON.stringify(data), 'utf8', (err) => {
+        if (err) {
+            console.error('Error writing file:', err);
+            return;
+        }
+        console.log('File has been saved to', filePath);
+    });
 }
