@@ -20,7 +20,10 @@ def scrape_fb():
         try:
             sb.open("https://www.facebook.com/")
 
-            for cookie in _extract_manual_cookies("functions/facebook-auth.json"):
+            cookies = _extract_manual_cookies("functions/facebook-auth.json")
+            print(f"DEBUG: Loading {len(cookies)} cookies into SeleniumBase.")
+
+            for cookie in cookies:
                 sb.driver.add_cookie(
                     {
                         "name": cookie["name"],
