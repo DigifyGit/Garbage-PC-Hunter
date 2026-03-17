@@ -1,14 +1,12 @@
 from seleniumbase import SB
 import json
-import os
 import sys
 
 
-def _extract_manual_cookies(raw_cookie_data):
-    if not raw_cookie_data:
-        return []
+def _extract_manual_cookies(auth_file_path):
+    with open(auth_file_path, "r", encoding="utf-8") as auth_file:
+        parsed = json.load(auth_file)
 
-    parsed = json.loads(raw_cookie_data)
     cookies = parsed if isinstance(parsed, list) else parsed.get("cookies", [])
     required = {"datr", "c_user", "xs"}
 
@@ -22,7 +20,7 @@ def scrape_fb():
         try:
             sb.open("https://www.facebook.com/")
 
-            for cookie in _extract_manual_cookies(os.getenv("FACEBOOK_AUTH")):
+            for cookie in _extract_manual_cookies("functions/facebook-auth.json"):
                 sb.driver.add_cookie(
                     {
                         "name": cookie["name"],

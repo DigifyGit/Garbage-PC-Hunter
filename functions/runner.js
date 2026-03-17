@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { runOLX } from './hunters/olx.js';
@@ -36,20 +36,18 @@ async function run() {
 
   try {
     const authPath = './functions/facebook-auth.json';
-    let parsedCookies = [];
+    const parsedFile = JSON.parse(readFileSync(authPath, 'utf8'));
+    const cookies = Array.isArray(parsedFile) ? parsedFile : parsedFile.cookies || [];
+    const requiredCookieNames = new Set(['c_user', 'xs', 'datr']);
+    const authCookies = cookies.filter(
+      (cookie) => requiredCookieNames.has(cookie?.name) && cookie?.value,
+    );
 
-    if (process.env.FACEBOOK_AUTH) {
-      const parsedSecret = JSON.parse(process.env.FACEBOOK_AUTH);
-      parsedCookies = Array.isArray(parsedSecret) ? parsedSecret : parsedSecret.cookies || [];
-    } else if (existsSync(authPath)) {
-      const parsedFile = JSON.parse(readFileSync(authPath, 'utf8'));
-      parsedCookies = Array.isArray(parsedFile) ? parsedFile : parsedFile.cookies || [];
+    if (authCookies.length > 0) {
+      await context.addCookies(authCookies);
+      console.log('DEBUG: Cookies loaded successfully');
     } else {
-      runErrors.push('FACEBOOK NO_AUTH: FACEBOOK_AUTH secret and functions/facebook-auth.json missing.');
-    }
-
-    if (Array.isArray(parsedCookies) && parsedCookies.length > 0) {
-      await context.addCookies(parsedCookies);
+      runErrors.push('FACEBOOK NO_AUTH: c_user, xs, and datr were not found in functions/facebook-auth.json.');
     }
   } catch (error) {
     runErrors.push(formatRunError('FACEBOOK_AUTH', error));
