@@ -1,19 +1,11 @@
-import { readFileSync, existsSync } from 'fs';
 import { KEYWORDS_PT_EN, BUDGET } from '../keywords.js';
 
-export async function runFacebook(browser) {
-  const authPath = './facebook-auth.json';
-
-  if (!existsSync(authPath)) {
-    return [{ status: 'NO_AUTH', platform: 'FACEBOOK', message: 'facebook-auth.json missing — run auth setup first. Use: npx playwright codegen https://facebook.com to generate it.' }];
-  }
-
+export async function runFacebook(browser, context) {
   const results = [];
 
   for (const keyword of KEYWORDS_PT_EN) {
     let page;
     try {
-      const context = await browser.newContext({ storageState: authPath });
       page = await context.newPage();
 
       const url = `https://www.facebook.com/marketplace/lisboa/search?query=${encodeURIComponent(keyword)}&minPrice=100&maxPrice=${BUDGET.absolute_max}`;
