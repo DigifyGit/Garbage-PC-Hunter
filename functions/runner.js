@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import fs from 'fs';
 import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { runOLX } from './hunters/olx.js';
@@ -35,23 +35,13 @@ async function run() {
   let facebookResults = [];
 
   try {
-    const authPath = './functions/facebook-auth.json';
-    const parsedFile = JSON.parse(readFileSync(authPath, 'utf8'));
-    const cookies = Array.isArray(parsedFile) ? parsedFile : parsedFile.cookies || [];
-    const requiredCookieNames = new Set(['c_user', 'xs', 'datr']);
-    const authCookies = cookies.filter(
-      (cookie) => requiredCookieNames.has(cookie?.name) && cookie?.value,
-    );
-
-    if (authCookies.length > 0) {
-      await context.addCookies(authCookies);
-      console.log('DEBUG: Cookies loaded successfully');
-    } else {
-      runErrors.push('FACEBOOK NO_AUTH: c_user, xs, and datr were not found in functions/facebook-auth.json.');
-    }
-  } catch (error) {
-    runErrors.push(formatRunError('FACEBOOK_AUTH', error));
-    console.error('Failed to load Facebook auth cookies:', error);
+    const cookieData = fs.readFileSync('functions/facebook-auth.json', 'utf8');
+    const cookies = JSON.parse(cookieData);
+    await context.addCookies(cookies);
+    console.log('STATUS: Cookies injected successfully from disk.');
+  } catch (e) {
+    console.error('CRITICAL ERROR: Could not read or parse facebook-auth.json:', e.message);
+    throw new Error('NO_AUTH_FILE');
   }
 
   try {
