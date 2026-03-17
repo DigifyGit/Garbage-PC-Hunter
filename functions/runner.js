@@ -1,3 +1,4 @@
+import { readFileSync, existsSync } from 'fs';
 import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { runOLX } from './hunters/olx.js';
@@ -26,9 +27,25 @@ function collectPlatformStatuses(results = []) {
 
 async function run() {
   const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext();
   const runErrors = [];
   let olxResults = [];
   let facebookResults = [];
+
+  try {
+    const authPath = './functions/facebook-auth.json';
+    if (existsSync(authPath)) {
+      const parsedCookies = JSON.parse(readFileSync(authPath, 'utf8'));
+      if (Array.isArray(parsedCookies) && parsedCookies.length > 0) {
+        await context.addCookies(parsedCookies);
+      }
+    } else {
+      runErrors.push('FACEBOOK NO_AUTH: functions/facebook-auth.json missing.');
+    }
+  } catch (error) {
+    runErrors.push(formatRunError('FACEBOOK_AUTH', error));
+    console.error('Failed to load Facebook auth cookies:', error);
+  }
 
   try {
     try {
@@ -40,7 +57,7 @@ async function run() {
     }
 
     try {
-      facebookResults = await runFacebook(browser);
+      facebookResults = await runFacebook(browser, context);
       runErrors.push(...collectPlatformStatuses(facebookResults));
     } catch (error) {
       runErrors.push(formatRunError('FACEBOOK', error));

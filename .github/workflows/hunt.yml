@@ -20,6 +20,8 @@ jobs:
         run: cd functions && npm install
       - name: Install Playwright
         run: cd functions && npx playwright install chromium --with-deps
+      - name: Write Facebook Auth Secret
+        run: echo '${{ secrets.FACEBOOK_AUTH }}' > functions/facebook-auth.json
       - name: Run Scraper and Generate HTML
         run: node functions/runner.js
       - name: Deploy to GitHub Pages
