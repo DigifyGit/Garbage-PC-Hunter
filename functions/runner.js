@@ -1,17 +1,51 @@
-import { chromium } from 'playwright';
+import { chromium } from 'playwright-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { runOLX } from './hunters/olx.js';
 import { runFacebook } from './hunters/facebook.js';
 import { scoreListings } from './scorer.js';
 import { writeDashboard } from './dashboard.js';
 
+chromium.use(StealthPlugin());
+
+function formatRunError(platform, error) {
+  if (!error) return `${platform}: unknown error`;
+  if (typeof error === 'string') return `${platform}: ${error}`;
+
+  const message = error.message || JSON.stringify(error);
+  return `${platform}: ${message}`;
+}
+
+function collectPlatformStatuses(results = []) {
+  return results
+    .filter((item) => item && item.status)
+    .map((item) => {
+      const details = item.message || item.keyword || 'no additional details';
+      return `${item.platform || 'UNKNOWN'} ${item.status}: ${details}`;
+    });
+}
+
 async function run() {
   const browser = await chromium.launch({ headless: true });
+  const runErrors = [];
+  let olxResults = [];
+  let facebookResults = [];
 
   try {
-    const [olxResults, facebookResults] = await Promise.all([
-      runOLX(browser),
-      runFacebook(browser),
-    ]);
+    try {
+      olxResults = await runOLX(browser);
+      runErrors.push(...collectPlatformStatuses(olxResults));
+    } catch (error) {
+      runErrors.push(formatRunError('OLX', error));
+      console.error('OLX run failed:', error);
+    }
+
+    try {
+      facebookResults = await runFacebook(browser);
+      runErrors.push(...collectPlatformStatuses(facebookResults));
+    } catch (error) {
+      runErrors.push(formatRunError('FACEBOOK', error));
+      console.error('Facebook run failed:', error);
+    }
 
     const combined = [...olxResults, ...facebookResults]
       .filter((item) => item && !item.status)
@@ -22,8 +56,8 @@ async function run() {
         url: item.url || item.sourceUrl || '',
       }));
 
-    const scored = scoreListings(combined);
-    writeDashboard(scored);
+    const scoredListings = scoreListings(combined);
+    writeDashboard(scoredListings, runErrors);
 
     await browser.close();
     process.exit(0);

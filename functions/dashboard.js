@@ -9,7 +9,15 @@ function escapeHtml(value = '') {
     .replaceAll("'", '&#39;');
 }
 
-export function buildDashboardHtml(listings) {
+export function buildDashboardHtml(listings = [], runErrors = []) {
+  const statusContent = runErrors.length
+    ? `
+      <ul class="status-list error">
+        ${runErrors.map((error) => `<li>${escapeHtml(error)}</li>`).join('')}
+      </ul>
+    `
+    : '<p class="status-ok">All scrapers completed without reported platform errors.</p>';
+
   const cards = listings
     .map(
       (listing) => `
@@ -27,6 +35,10 @@ export function buildDashboardHtml(listings) {
     )
     .join('');
 
+  const listingsContent = listings.length
+    ? `<section class="grid">${cards}</section>`
+    : '<p class="empty-listings"><strong>0 listings found. The scraper may have been blocked by the platforms.</strong></p>';
+
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -37,6 +49,12 @@ export function buildDashboardHtml(listings) {
     body { font-family: Arial, sans-serif; margin: 0; background: #f5f7fb; color: #111827; }
     main { max-width: 1100px; margin: 0 auto; padding: 1rem; }
     h1 { margin: 0 0 1rem; }
+    .status { background: white; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); }
+    .status h2 { margin-top: 0; }
+    .status-list { margin: 0; padding-left: 1.2rem; }
+    .status-list.error { color: #b91c1c; font-weight: 600; }
+    .status-ok { color: #166534; font-weight: 600; }
+    .empty-listings { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; border-radius: 12px; padding: 1rem; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
     .card { background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); }
     .card h2 { margin-top: 0; font-size: 1.1rem; }
@@ -48,17 +66,19 @@ export function buildDashboardHtml(listings) {
 <body>
   <main>
     <h1>Daily Laptop Hunt - Lisbon</h1>
-    <section class="grid">
-      ${cards}
+    <section class="status">
+      <h2>System Status</h2>
+      ${statusContent}
     </section>
+    ${listingsContent}
   </main>
 </body>
 </html>`;
 }
 
-export function writeDashboard(listings) {
+export function writeDashboard(listings = [], runErrors = []) {
   mkdirSync('public', { recursive: true });
-  const html = buildDashboardHtml(listings);
+  const html = buildDashboardHtml(listings, runErrors);
   writeFileSync('public/index.html', html, 'utf8');
   return html;
 }
