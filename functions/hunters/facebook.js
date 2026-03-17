@@ -10,6 +10,7 @@ export async function runFacebook(browser, context) {
 
       const url = `https://www.facebook.com/marketplace/lisboa/search?query=${encodeURIComponent(keyword)}&minPrice=100&maxPrice=${BUDGET.absolute_max}`;
       await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+      await page.waitForTimeout(5000);
 
       if (page.url().includes('login') || page.url().includes('checkpoint') || page.url().includes('captcha')) {
         await page.close();
