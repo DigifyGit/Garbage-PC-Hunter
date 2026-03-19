@@ -1,0 +1,86 @@
+{
+  "cookies": [
+    {
+      "name": "datr",
+      "value": "yKe5abfhRuxCiKlIXdd1QLZS",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1808334796,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "fr",
+      "value": "0akN6rXiXJSyPcKxW.AWdf19achflDuXkMgYQrDlrptTK2oarISVNBhjGtk7zbhCWxP9w.BpucO3..AAA.0.0.Bpu1wf.AWfXuAmIBZ_UJiERpun0UcqFF8A",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1781662496,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "xs",
+      "value": "44%3AiWl9z6_ykVcj8Q%3A2%3A1773781942%3A-1%3A-1%3A%3AAczWtJrKcQ8doocliHt-Q5XoKapXeMHZgPM6CNvRdg",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1805422501,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "c_user",
+      "value": "61583040700639",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1805422501,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "1",
+      "value": "1",
+      "domain": "www.facebook.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "None"
+    },
+    {
+      "name": "sb",
+      "value": "Q7-5af2kTA2DAnWuoFnn2KsE",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1808341943,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "wd",
+      "value": "667x678",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1774491300,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.facebook.com",
+      "localStorage": [],
+      "sessionStorage": []
+    },
+    {
+      "origin": "https://facebook.com",
+      "localStorage": [],
+      "sessionStorage": []
+    }
+  ]
+}
