@@ -1,0 +1,27 @@
+name: Scrape Facebook Marketplace
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install playwright --save-dev
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: node facebook-marketplace-scraper.js
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: marketplace-results
+          path: |
+            marketplace-listings.json
+            marketplace-screenshot.png
